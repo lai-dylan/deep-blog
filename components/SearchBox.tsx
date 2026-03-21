@@ -35,7 +35,7 @@ export function SearchBox({ articles }: SearchBoxProps) {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onFocus={() => setIsOpen(true)}
-          placeholder="搜索文章..."
+          placeholder="Search..."
           className="w-64 pl-9 pr-4 py-2 bg-transparent border border-[hsl(var(--border))] rounded-md text-sm placeholder:text-[hsl(var(--muted-foreground))] focus:outline-none focus:border-[hsl(var(--foreground))]"
         />
         <svg 
@@ -78,7 +78,7 @@ export function SearchBox({ articles }: SearchBoxProps) {
               ))
             ) : query.length >= 2 ? (
               <div className="px-4 py-2 text-sm text-[hsl(var(--muted-foreground))]">
-                未找到相关文章
+                No articles found
               </div>
             ) : null}
           </div>

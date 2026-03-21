@@ -1,10 +1,8 @@
 ---
 title: TypeScript 的高级类型体操
 date: 2024-10-10
-tags: [技术, TypeScript, 前端]
-summary: 掌握 TypeScript 的高级类型系统，让代码更加健壮和可维护。
+tags: [TypeScript]
 ---
-
 ## 为什么需要类型系统
 
 JavaScript 的动态类型带来了灵活性，但也埋下了许多隐患。在大型项目中，类型错误是运行时错误的主要来源之一。
@@ -81,15 +79,15 @@ type FooReturn = ReturnType<typeof foo>;
 
 TypeScript 内置了许多实用的工具类型：
 
-| 工具类型 | 作用 |
-|---------|------|
-| `Partial<T>` | 所有属性变为可选 |
-| `Required<T>` | 所有属性变为必选 |
-| `Readonly<T>` | 所有属性变为只读 |
-| `Pick<T, K>` | 选择部分属性 |
-| `Omit<T, K>` | 排除部分属性 |
-| `Exclude<T, U>` | 从联合类型中排除 |
-| `Extract<T, U>` | 从联合类型中提取 |
+| 工具类型         | 作用                   |
+| ---------------- | ---------------------- |
+| `Partial<T>`     | 所有属性变为可选       |
+| `Required<T>`    | 所有属性变为必选       |
+| `Readonly<T>`    | 所有属性变为只读       |
+| `Pick<T, K>`     | 选择部分属性           |
+| `Omit<T, K>`     | 排除部分属性           |
+| `Exclude<T, U>`  | 从联合类型中排除       |
+| `Extract<T, U>`  | 从联合类型中提取       |
 | `NonNullable<T>` | 排除 null 和 undefined |
 
 ## 递归类型
