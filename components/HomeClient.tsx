@@ -24,11 +24,8 @@ export function HomeClient({ articles, tags }: HomeProps) {
   }, [searchParams])
 
   const handleTagClick = (tag: string | null) => {
-    if (tag) {
-      router.push(`/?tag=${encodeURIComponent(tag)}`)
-    } else {
-      router.push('/')
-    }
+    const url = tag ? `/?tag=${encodeURIComponent(tag)}` : '/'
+    window.history.replaceState(null, '', url)
     setSelectedTag(tag)
   }
 
