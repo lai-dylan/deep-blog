@@ -2,6 +2,7 @@
 const nextConfig = {
   output: 'export',
   distDir: 'dist',
+  basePath: '/deep-blog',
   images: {
     unoptimized: true,
   },
