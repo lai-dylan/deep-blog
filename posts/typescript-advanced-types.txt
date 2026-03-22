@@ -1,0 +1,323 @@
+1:"$Sreact.fragment"
+2:I[9766,[],""]
+3:I[8924,[],""]
+4:I[2619,["619","static/chunks/619-ba102abea3e3d0e4.js","841","static/chunks/841-ec4b2380336b29fe.js","858","static/chunks/app/posts/%5Bslug%5D/page-463476755744e946.js"],""]
+5:I[6621,["619","static/chunks/619-ba102abea3e3d0e4.js","841","static/chunks/841-ec4b2380336b29fe.js","858","static/chunks/app/posts/%5Bslug%5D/page-463476755744e946.js"],"ThemeToggle"]
+7:I[4431,[],"OutletBoundary"]
+9:I[5278,[],"AsyncMetadataOutlet"]
+b:I[4431,[],"ViewportBoundary"]
+d:I[4431,[],"MetadataBoundary"]
+e:"$Sreact.suspense"
+10:I[7150,[],""]
+:HL["/_next/static/css/584b8c96e7a07563.css","style"]
+0:{"P":null,"b":"CiMLRtogK6wlsIjq2venZ","p":"","c":["","posts","typescript-advanced-types"],"i":false,"f":[[["",{"children":["posts",{"children":[["slug","typescript-advanced-types","d"],{"children":["__PAGE__",{}]}]}]},"$undefined","$undefined",true],["",["$","$1","c",{"children":[[["$","link","0",{"rel":"stylesheet","href":"/_next/static/css/584b8c96e7a07563.css","precedence":"next","crossOrigin":"$undefined","nonce":"$undefined"}]],["$","html",null,{"lang":"zh-CN","suppressHydrationWarning":true,"children":[["$","head",null,{"children":["$","script",null,{"dangerouslySetInnerHTML":{"__html":"\n              (function() {\n                const theme = localStorage.getItem('theme');\n                if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {\n                  document.documentElement.setAttribute('data-theme', 'dark');\n                }\n              })();\n            "}}]}],["$","body",null,{"className":"min-h-screen antialiased","children":["$","$L2",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L3",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":[["$","div",null,{"className":"min-h-screen flex flex-col","children":[["$","header",null,{"className":"sticky top-0 z-30 border-b border-[hsl(var(--border))] bg-[hsl(var(--background))]/80 backdrop-blur-sm","children":["$","div",null,{"className":"max-w-3xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between","children":[["$","$L4",null,{"href":"/","className":"text-lg font-semibold tracking-tight hover:opacity-80 transition-opacity","children":"Deep Blog"}],["$","$L5",null,{}]]}]}],["$","main",null,{"className":"flex-1 flex items-center justify-center","children":["$","div",null,{"className":"text-center","children":[["$","h1",null,{"className":"text-4xl font-bold tracking-tight mb-4","children":"404"}],["$","p",null,{"className":"text-[hsl(var(--muted-foreground))] mb-6","children":"页面未找到"}],["$","$L4",null,{"href":"/","className":"text-sm border border-[hsl(var(--border))] px-4 py-2 rounded-md hover:bg-[hsl(var(--muted))] transition-colors","children":"返回首页"}]]}]}]]}],[]],"forbidden":"$undefined","unauthorized":"$undefined"}]}]]}]]}],{"children":["posts",["$","$1","c",{"children":[null,["$","$L2",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L3",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":"$undefined","forbidden":"$undefined","unauthorized":"$undefined"}]]}],{"children":[["slug","typescript-advanced-types","d"],["$","$1","c",{"children":[null,["$","$L2",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L3",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":"$undefined","forbidden":"$undefined","unauthorized":"$undefined"}]]}],{"children":["__PAGE__",["$","$1","c",{"children":["$L6",null,["$","$L7",null,{"children":["$L8",["$","$L9",null,{"promise":"$@a"}]]}]]}],{},null,false]},null,false]},null,false]},null,false],["$","$1","h",{"children":[null,[["$","$Lb",null,{"children":"$Lc"}],null],["$","$Ld",null,{"children":["$","div",null,{"hidden":true,"children":["$","$e",null,{"fallback":null,"children":"$Lf"}]}]}]]}],false]],"m":"$undefined","G":["$10",[]],"s":false,"S":true}
+11:I[4087,["619","static/chunks/619-ba102abea3e3d0e4.js","841","static/chunks/841-ec4b2380336b29fe.js","858","static/chunks/app/posts/%5Bslug%5D/page-463476755744e946.js"],"BackButton"]
+12:I[7053,["619","static/chunks/619-ba102abea3e3d0e4.js","841","static/chunks/841-ec4b2380336b29fe.js","858","static/chunks/app/posts/%5Bslug%5D/page-463476755744e946.js"],"SearchBox"]
+13:T8fb,## 工具的陷阱
+
+作为一个写作者，我尝试过很多写作工具：从功能丰富的 Word 到简洁的 Markdown 编辑器，从在线协作平台到本地知识管理软件。每次尝试新工具时，我都会花费大量时间去学习它的功能、配置它的环境、优化它的设置。
+
+但最终我发现，**工具越复杂，创作的阻力就越大**。
+
+## 回归本质
+
+写作的本质是什么？是把想法转化为文字。仅此而已。
+
+一个好的写作系统应该满足以下条件：
+
+- **启动迅速** - 打开就能写，没有加载时间
+- **格式简单** - 不需要纠结排版，专注于内容
+- **易于检索** - 能够快速找到之前的想法
+- **版本可控** - 不用担心丢失或覆盖
+- **发布方便** - 写完就能分享
+
+## 我的极简方案
+
+### Markdown + Git
+
+使用 Markdown 格式存储所有文章，用 Git 进行版本管理。这套组合的优势：
+
+1. **纯文本** - 永远不会被锁定在某个特定软件中
+2. **版本历史** - 每一次修改都有记录，可以随时回溯
+3. ** diff 友好** - 清楚看到每次改了什么
+4. **协作简单** - 多人编辑没有冲突
+5. **发布灵活** - 可以轻松转换为 HTML、PDF 等各种格式
+
+### 文件组织结构
+
+```
+content/
+├── 2024/
+│   ├── thinking/
+│   ├── tech/
+│   └── life/
+└── drafts/
+```
+
+按年份和主题分类，草稿单独存放。保持扁平，不要嵌套太深。
+
+## 写作流程
+
+1. **随时记录** - 想法出现时立即在草稿区记下
+2. **定期整理** - 每周回顾草稿，扩展成完整文章
+3. **专注写作** - 使用全屏编辑器，关闭所有通知
+4. **完成发布** - 移动到正式目录，提交 Git，自动部署
+
+## 技术实现
+
+博客使用 Next.js 构建，通过 GitHub Actions 自动部署到 GitHub Pages。整个流程完全自动化：
+
+```bash
+# 本地写作
+echo "# 新文章" > content/new-post.md
+git add . && git commit -m "add new post"
+git push
+
+# 自动部署到线上
+```
+
+不需要登录任何后台，不需要点击发布按钮。**Git push 即发布**。
+
+## 结语
+
+最好的工具是那个让你忘记它存在的工具。当技术细节不再分散注意力，我们才能专注于真正重要的事情：**写出有价值的文字**。
+14:Tb32,## 为什么需要类型系统
+
+JavaScript 的动态类型带来了灵活性，但也埋下了许多隐患。在大型项目中，类型错误是运行时错误的主要来源之一。
+
+TypeScript 通过静态类型检查，在编译阶段就能发现大部分问题。但这只是基础，真正强大的地方在于它的**类型系统本身是一门语言**。
+
+## 泛型：类型的函数
+
+泛型让类型具有了参数化的能力，就像函数可以接收参数一样：
+
+```typescript
+// 基础泛型
+function identity<T>(arg: T): T {
+  return arg;
+}
+
+// 泛型约束
+function loggingIdentity<T extends { length: number }>(arg: T): T {
+  console.log(arg.length);
+  return arg;
+}
+```
+
+## 条件类型：类型的 if/else
+
+条件类型让我们可以根据类型之间的关系做出选择：
+
+```typescript
+type IsString<T> = T extends string ? true : false;
+
+type A = IsString<string>;  // true
+type B = IsString<number>;  // false
+```
+
+## 映射类型：批量转换
+
+使用映射类型可以基于已有类型创建新类型：
+
+```typescript
+type Readonly<T> = {
+  readonly [P in keyof T]: T[P];
+};
+
+type Partial<T> = {
+  [P in keyof T]?: T[P];
+};
+
+// 使用
+interface User {
+  name: string;
+  age: number;
+}
+
+type ReadonlyUser = Readonly<User>;
+// { readonly name: string; readonly age: number; }
+```
+
+## infer：类型推导
+
+`infer` 关键字允许我们在条件类型中推导类型：
+
+```typescript
+type ReturnType<T> = T extends (...args: any[]) => infer R ? R : never;
+
+function foo() {
+  return { x: 1, y: 2 };
+}
+
+type FooReturn = ReturnType<typeof foo>;
+// { x: number; y: number; }
+```
+
+## 实用工具类型
+
+TypeScript 内置了许多实用的工具类型：
+
+| 工具类型         | 作用                   |
+| ---------------- | ---------------------- |
+| `Partial<T>`     | 所有属性变为可选       |
+| `Required<T>`    | 所有属性变为必选       |
+| `Readonly<T>`    | 所有属性变为只读       |
+| `Pick<T, K>`     | 选择部分属性           |
+| `Omit<T, K>`     | 排除部分属性           |
+| `Exclude<T, U>`  | 从联合类型中排除       |
+| `Extract<T, U>`  | 从联合类型中提取       |
+| `NonNullable<T>` | 排除 null 和 undefined |
+
+## 递归类型
+
+处理嵌套结构时，递归类型非常有用：
+
+```typescript
+type DeepReadonly<T> = {
+  readonly [P in keyof T]: T[P] extends object 
+    ? DeepReadonly<T[P]> 
+    : T[P];
+};
+
+interface Nested {
+  a: { b: { c: string } };
+}
+
+type ReadonlyNested = DeepReadonly<Nested>;
+// 所有层级都变为只读
+```
+
+## 结语
+
+TypeScript 的类型系统是一个强大的工具，它不仅能帮助我们捕获错误，还能作为文档、提高 IDE 体验、重构时提供安全保障。
+
+但记住，类型的目的是让代码更清晰，而不是更复杂。在实用和炫技之间找到平衡，才是使用 TypeScript 的正确姿势。
+6:["$","div",null,{"className":"min-h-screen","children":[["$","header",null,{"className":"sticky top-0 z-30 border-b border-[hsl(var(--border))] bg-[hsl(var(--background))]/80 backdrop-blur-sm","children":["$","div",null,{"className":"max-w-3xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between","children":[["$","$L11",null,{}],["$","div",null,{"className":"flex items-center gap-4","children":[["$","$L12",null,{"articles":[{"slug":"deep-learning-value","title":"深度学习的长期价值","date":"2024-12-15","tags":["思考"],"summary":"\n 信息的洪流\n\n我们每天都被海量信息包围。社交媒体、新闻推送、即时通讯，这些工具让我们能够第一时间获取信息，但同时也带来了一个问题：我们变得越来越难以专注。\n\n刷一条短视频只需要几秒钟，看一篇文章需要几分钟，而读一本书则需要几个小时甚至几天。在效率至上的思维模式下，我们倾向于选择最快速的信息获取方式，却忽视了深度思考所带来的价值。\n\n 什么是深度学习\n\n深度学习不是简单的信息堆积...","content":"\n## 信息的洪流\n\n我们每天都被海量信息包围。社交媒体、新闻推送、即时通讯，这些工具让我们能够第一时间获取信息，但同时也带来了一个问题：**我们变得越来越难以专注**。\n\n刷一条短视频只需要几秒钟，看一篇文章需要几分钟，而读一本书则需要几个小时甚至几天。在效率至上的思维模式下，我们倾向于选择最快速的信息获取方式，却忽视了深度思考所带来的价值。\n\n## 什么是深度学习\n\n深度学习不是简单的信息堆积，而是通过思考、关联、实践，将知识内化为自己的认知体系。它需要：\n\n- **时间** - 沉下心来，给自己足够的时间去思考\n- **专注** - 排除干扰，保持长时间的注意力集中\n- **反思** - 不断回顾和质疑自己的观点\n- **实践** - 将学到的知识应用到实际问题中\n\n## 为什么深度很重要\n\n### 1. 理解本质\n\n浅层学习让我们知道\"是什么\"，深度学习让我们理解\"为什么\"。只有理解了底层原理，我们才能举一反三，应对各种复杂情况。\n\n### 2. 建立联系\n\n碎片化的知识是孤立的，深度的学习能够帮我们建立知识之间的联系，形成网络效应。当知识相互连接，它们的价值会指数级增长。\n\n### 3. 形成洞察\n\n真正的创新往往来自于对某个领域的深度理解。只有在深入了解之后，我们才能发现别人看不到的机会和问题。\n\n## 如何培养深度\n\n1. **设定边界** - 明确学习和思考的时间，避免被其他事情打断\n2. **减少输入** - 有意识地减少信息摄入量，提高信息质量\n3. **写作输出** - 通过写作整理思路，这是检验理解程度的最好方式\n4. **定期回顾** - 建立知识管理系统，定期回顾和更新认知\n\n## 结语\n\n深度不是一蹴而就的，它需要持续的努力和刻意的练习。但正是这种深度，让我们在浮躁的时代保持清醒，在复杂的世界中找到方向。\n\n> \"在浅薄的时代，做一个深度的人。\"\n"},{"slug":"minimal-writing-system","title":"构建极简写作系统","date":"2024-11-28","tags":["Labs"],"summary":" 工具的陷阱\n\n作为一个写作者，我尝试过很多写作工具：从功能丰富的 Word 到简洁的 Markdown 编辑器，从在线协作平台到本地知识管理软件。每次尝试新工具时，我都会花费大量时间去学习它的功能、配置它的环境、优化它的设置。\n\n但最终我发现，工具越复杂，创作的阻力就越大。\n\n 回归本质\n\n写作的本质是什么？是把想法转化为文字。仅此而已。\n\n一个好的写作系统应该满足以下条件：\n\n...","content":"$13"},{"slug":"typescript-advanced-types","title":"TypeScript 的高级类型体操","date":"2024-10-10","tags":["TypeScript"],"summary":" 为什么需要类型系统\n\nJavaScript 的动态类型带来了灵活性，但也埋下了许多隐患。在大型项目中，类型错误是运行时错误的主要来源之一。\n\nTypeScript 通过静态类型检查，在编译阶段就能发现大部分问题。但这只是基础，真正强大的地方在于它的类型系统本身是一门语言。\n\n 泛型：类型的函数\n\n泛型让类型具有了参数化的能力，就像函数可以接收参数一样：\n\ntypescrip...","content":"$14"}]}],"$L15"]}]]}]}],"$L16","$L17"]}]
+18:I[8655,["619","static/chunks/619-ba102abea3e3d0e4.js","841","static/chunks/841-ec4b2380336b29fe.js","858","static/chunks/app/posts/%5Bslug%5D/page-463476755744e946.js"],"TableOfContents"]
+1a:I[8032,["619","static/chunks/619-ba102abea3e3d0e4.js","841","static/chunks/841-ec4b2380336b29fe.js","858","static/chunks/app/posts/%5Bslug%5D/page-463476755744e946.js"],"CodeBlock"]
+15:["$","$L5",null,{}]
+19:Tb32,## 为什么需要类型系统
+
+JavaScript 的动态类型带来了灵活性，但也埋下了许多隐患。在大型项目中，类型错误是运行时错误的主要来源之一。
+
+TypeScript 通过静态类型检查，在编译阶段就能发现大部分问题。但这只是基础，真正强大的地方在于它的**类型系统本身是一门语言**。
+
+## 泛型：类型的函数
+
+泛型让类型具有了参数化的能力，就像函数可以接收参数一样：
+
+```typescript
+// 基础泛型
+function identity<T>(arg: T): T {
+  return arg;
+}
+
+// 泛型约束
+function loggingIdentity<T extends { length: number }>(arg: T): T {
+  console.log(arg.length);
+  return arg;
+}
+```
+
+## 条件类型：类型的 if/else
+
+条件类型让我们可以根据类型之间的关系做出选择：
+
+```typescript
+type IsString<T> = T extends string ? true : false;
+
+type A = IsString<string>;  // true
+type B = IsString<number>;  // false
+```
+
+## 映射类型：批量转换
+
+使用映射类型可以基于已有类型创建新类型：
+
+```typescript
+type Readonly<T> = {
+  readonly [P in keyof T]: T[P];
+};
+
+type Partial<T> = {
+  [P in keyof T]?: T[P];
+};
+
+// 使用
+interface User {
+  name: string;
+  age: number;
+}
+
+type ReadonlyUser = Readonly<User>;
+// { readonly name: string; readonly age: number; }
+```
+
+## infer：类型推导
+
+`infer` 关键字允许我们在条件类型中推导类型：
+
+```typescript
+type ReturnType<T> = T extends (...args: any[]) => infer R ? R : never;
+
+function foo() {
+  return { x: 1, y: 2 };
+}
+
+type FooReturn = ReturnType<typeof foo>;
+// { x: number; y: number; }
+```
+
+## 实用工具类型
+
+TypeScript 内置了许多实用的工具类型：
+
+| 工具类型         | 作用                   |
+| ---------------- | ---------------------- |
+| `Partial<T>`     | 所有属性变为可选       |
+| `Required<T>`    | 所有属性变为必选       |
+| `Readonly<T>`    | 所有属性变为只读       |
+| `Pick<T, K>`     | 选择部分属性           |
+| `Omit<T, K>`     | 排除部分属性           |
+| `Exclude<T, U>`  | 从联合类型中排除       |
+| `Extract<T, U>`  | 从联合类型中提取       |
+| `NonNullable<T>` | 排除 null 和 undefined |
+
+## 递归类型
+
+处理嵌套结构时，递归类型非常有用：
+
+```typescript
+type DeepReadonly<T> = {
+  readonly [P in keyof T]: T[P] extends object 
+    ? DeepReadonly<T[P]> 
+    : T[P];
+};
+
+interface Nested {
+  a: { b: { c: string } };
+}
+
+type ReadonlyNested = DeepReadonly<Nested>;
+// 所有层级都变为只读
+```
+
+## 结语
+
+TypeScript 的类型系统是一个强大的工具，它不仅能帮助我们捕获错误，还能作为文档、提高 IDE 体验、重构时提供安全保障。
+
+但记住，类型的目的是让代码更清晰，而不是更复杂。在实用和炫技之间找到平衡，才是使用 TypeScript 的正确姿势。
+16:["$","$L18",null,{"content":"$19"}]
+17:["$","article",null,{"className":"max-w-3xl mx-auto px-4 sm:px-6 py-8","children":[["$","header",null,{"className":"mb-8","children":[["$","h1",null,{"className":"text-3xl sm:text-4xl font-bold tracking-tight mb-3","children":"TypeScript 的高级类型体操"}],["$","div",null,{"className":"flex flex-wrap items-center gap-3 text-sm text-[hsl(var(--muted-foreground))]","children":[["$","time",null,{"children":"2024-10-10"}],[["$","span",null,{"children":"·"}],["$","div",null,{"className":"flex gap-1.5","children":[["$","$L4","TypeScript",{"href":"/?tag=TypeScript","className":"hover:text-[hsl(var(--foreground))] transition-colors","children":["#","TypeScript"]}]]}]]]}]]}],["$","div",null,{"className":"prose max-w-none","children":[["$","h2","h2-0",{"id":"","node":{"type":"element","tagName":"h2","properties":{},"children":[{"type":"text","value":"为什么需要类型系统","position":{"start":{"line":1,"column":4,"offset":3},"end":{"line":1,"column":13,"offset":12}}}],"position":{"start":{"line":1,"column":1,"offset":0},"end":{"line":1,"column":13,"offset":12}}},"children":"为什么需要类型系统"}],"\n",["$","p","p-0",{"children":"JavaScript 的动态类型带来了灵活性，但也埋下了许多隐患。在大型项目中，类型错误是运行时错误的主要来源之一。"}],"\n",["$","p","p-1",{"children":["TypeScript 通过静态类型检查，在编译阶段就能发现大部分问题。但这只是基础，真正强大的地方在于它的",["$","strong","strong-0",{"children":"类型系统本身是一门语言"}],"。"]}],"\n",["$","h2","h2-1",{"id":"-2","node":{"type":"element","tagName":"h2","properties":{},"children":[{"type":"text","value":"泛型：类型的函数","position":{"start":{"line":7,"column":4,"offset":148},"end":{"line":7,"column":12,"offset":156}}}],"position":{"start":{"line":7,"column":1,"offset":145},"end":{"line":7,"column":12,"offset":156}}},"children":"泛型：类型的函数"}],"\n",["$","p","p-2",{"children":"泛型让类型具有了参数化的能力，就像函数可以接收参数一样："}],"\n",["$","$L1a","pre-0,code-0",{"className":"language-typescript","inline":false,"children":"// 基础泛型\nfunction identity<T>(arg: T): T {\n  return arg;\n}\n\n// 泛型约束\nfunction loggingIdentity<T extends { length: number }>(arg: T): T {\n  console.log(arg.length);\n  return arg;\n}\n"}],"\n",["$","h2","h2-2",{"id":"-ifelse","node":{"type":"element","tagName":"h2","properties":{},"children":[{"type":"text","value":"条件类型：类型的 if/else","position":{"start":{"line":24,"column":4,"offset":388},"end":{"line":24,"column":20,"offset":404}}}],"position":{"start":{"line":24,"column":1,"offset":385},"end":{"line":24,"column":20,"offset":404}}},"children":"条件类型：类型的 if/else"}],"\n",["$","p","p-3",{"children":"条件类型让我们可以根据类型之间的关系做出选择："}],"\n",["$","$L1a","pre-1,code-0",{"className":"language-typescript","inline":false,"children":"type IsString<T> = T extends string ? true : false;\n\ntype A = IsString<string>;  // true\ntype B = IsString<number>;  // false\n"}],"\n",["$","h2","h2-3",{"id":"-3","node":{"type":"element","tagName":"h2","properties":{},"children":[{"type":"text","value":"映射类型：批量转换","position":{"start":{"line":35,"column":4,"offset":579},"end":{"line":35,"column":13,"offset":588}}}],"position":{"start":{"line":35,"column":1,"offset":576},"end":{"line":35,"column":13,"offset":588}}},"children":"映射类型：批量转换"}],"\n",["$","p","p-4",{"children":"使用映射类型可以基于已有类型创建新类型："}],"\n",["$","$L1a","pre-2,code-0",{"className":"language-typescript","inline":false,"children":"type Readonly<T> = {\n  readonly [P in keyof T]: T[P];\n};\n\ntype Partial<T> = {\n  [P in keyof T]?: T[P];\n};\n\n// 使用\ninterface User {\n  name: string;\n  age: number;\n}\n\ntype ReadonlyUser = Readonly<User>;\n// { readonly name: string; readonly age: number; }\n"}],"\n",["$","h2","h2-4",{"id":"infer","node":{"type":"element","tagName":"h2","properties":{},"children":[{"type":"text","value":"infer：类型推导","position":{"start":{"line":58,"column":4,"offset":886},"end":{"line":58,"column":14,"offset":896}}}],"position":{"start":{"line":58,"column":1,"offset":883},"end":{"line":58,"column":14,"offset":896}}},"children":"infer：类型推导"}],"\n",["$","p","p-5",{"children":[["$","$L1a","code-0",{"className":"$undefined","inline":true,"children":"infer"}]," 关键字允许我们在条件类型中推导类型："]}],"\n",["$","$L1a","pre-3,code-0",{"className":"language-typescript","inline":false,"children":"type ReturnType<T> = T extends (...args: any[]) => infer R ? R : never;\n\nfunction foo() {\n  return { x: 1, y: 2 };\n}\n\ntype FooReturn = ReturnType<typeof foo>;\n// { x: number; y: number; }\n"}],"\n",["$","h2","h2-5",{"id":"-4","node":{"type":"element","tagName":"h2","properties":{},"children":[{"type":"text","value":"实用工具类型","position":{"start":{"line":73,"column":4,"offset":1136},"end":{"line":73,"column":10,"offset":1142}}}],"position":{"start":{"line":73,"column":1,"offset":1133},"end":{"line":73,"column":10,"offset":1142}}},"children":"实用工具类型"}],"\n",["$","p","p-6",{"children":"TypeScript 内置了许多实用的工具类型："}],"\n",["$","table","table-0",{"children":[["$","thead","thead-0",{"children":"$L1b"}],"$L1c"]}],"\n","$L1d","\n","$L1e","\n","$L1f","\n","$L20","\n","$L21","\n","$L22"]}]]}]
+1b:["$","tr","tr-0",{"children":[["$","th","th-0",{"children":"工具类型"}],["$","th","th-1",{"children":"作用"}]]}]
+1c:["$","tbody","tbody-0",{"children":[["$","tr","tr-0",{"children":[["$","td","td-0",{"children":["$","$L1a","code-0",{"className":"$undefined","inline":true,"children":"Partial<T>"}]}],["$","td","td-1",{"children":"所有属性变为可选"}]]}],["$","tr","tr-1",{"children":[["$","td","td-0",{"children":["$","$L1a","code-0",{"className":"$undefined","inline":true,"children":"Required<T>"}]}],["$","td","td-1",{"children":"所有属性变为必选"}]]}],["$","tr","tr-2",{"children":[["$","td","td-0",{"children":["$","$L1a","code-0",{"className":"$undefined","inline":true,"children":"Readonly<T>"}]}],["$","td","td-1",{"children":"所有属性变为只读"}]]}],["$","tr","tr-3",{"children":[["$","td","td-0",{"children":["$","$L1a","code-0",{"className":"$undefined","inline":true,"children":"Pick<T, K>"}]}],["$","td","td-1",{"children":"选择部分属性"}]]}],["$","tr","tr-4",{"children":[["$","td","td-0",{"children":["$","$L1a","code-0",{"className":"$undefined","inline":true,"children":"Omit<T, K>"}]}],["$","td","td-1",{"children":"排除部分属性"}]]}],["$","tr","tr-5",{"children":[["$","td","td-0",{"children":["$","$L1a","code-0",{"className":"$undefined","inline":true,"children":"Exclude<T, U>"}]}],["$","td","td-1",{"children":"从联合类型中排除"}]]}],["$","tr","tr-6",{"children":[["$","td","td-0",{"children":["$","$L1a","code-0",{"className":"$undefined","inline":true,"children":"Extract<T, U>"}]}],["$","td","td-1",{"children":"从联合类型中提取"}]]}],["$","tr","tr-7",{"children":[["$","td","td-0",{"children":["$","$L1a","code-0",{"className":"$undefined","inline":true,"children":"NonNullable<T>"}]}],["$","td","td-1",{"children":"排除 null 和 undefined"}]]}]]}]
+1d:["$","h2","h2-6",{"id":"-5","node":{"type":"element","tagName":"h2","properties":{},"children":[{"type":"text","value":"递归类型","position":{"start":{"line":88,"column":4,"offset":1573},"end":{"line":88,"column":8,"offset":1577}}}],"position":{"start":{"line":88,"column":1,"offset":1570},"end":{"line":88,"column":8,"offset":1577}}},"children":"递归类型"}]
+1e:["$","p","p-7",{"children":"处理嵌套结构时，递归类型非常有用："}]
+1f:["$","$L1a","pre-4,code-0",{"className":"language-typescript","inline":false,"children":"type DeepReadonly<T> = {\n  readonly [P in keyof T]: T[P] extends object \n    ? DeepReadonly<T[P]> \n    : T[P];\n};\n\ninterface Nested {\n  a: { b: { c: string } };\n}\n\ntype ReadonlyNested = DeepReadonly<Nested>;\n// 所有层级都变为只读\n"}]
+20:["$","h2","h2-7",{"id":"-6","node":{"type":"element","tagName":"h2","properties":{},"children":[{"type":"text","value":"结语","position":{"start":{"line":107,"column":4,"offset":1841},"end":{"line":107,"column":6,"offset":1843}}}],"position":{"start":{"line":107,"column":1,"offset":1838},"end":{"line":107,"column":6,"offset":1843}}},"children":"结语"}]
+21:["$","p","p-8",{"children":"TypeScript 的类型系统是一个强大的工具，它不仅能帮助我们捕获错误，还能作为文档、提高 IDE 体验、重构时提供安全保障。"}]
+22:["$","p","p-9",{"children":"但记住，类型的目的是让代码更清晰，而不是更复杂。在实用和炫技之间找到平衡，才是使用 TypeScript 的正确姿势。"}]
+c:[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}]]
+8:null
+a:{"metadata":[["$","title","0",{"children":"TypeScript 的高级类型体操 | Deep Blog"}],["$","meta","1",{"name":"description","content":"深度长文，极简阅读"}]],"error":null,"digest":"$undefined"}
+f:"$a:metadata"
