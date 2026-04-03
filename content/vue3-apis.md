@@ -68,7 +68,7 @@ original.count = 5  // ✅ works
 4. **Primitive values** — reactive only works for objects, use `ref()` for primitives
 
 #### Quick Decision Guide
-```
+```typescript
 Need to make an OBJECT reactive?
   └── Yes → reactive(obj)
        └── Need to destructure it?
@@ -148,7 +148,7 @@ proxy.value = 10  // count.value is now 10
    ```
 
 #### Quick Decision Guide
-```
+```typescript
 Need to wrap a value reactively?
   └── Primitive (string, number, boolean) → ref(value)
        └── Need to write back via custom logic?
@@ -220,7 +220,7 @@ const localCount = computed({
 4. **Async in computed** — not supported (use `watch` instead)
 
 #### Quick Decision Guide
-```
+```typescript
 Need to DERIVE a value from state?
   └── Yes → computed(() => ...)
        └── Need to WRITE back to those sources?
