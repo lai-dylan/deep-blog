@@ -229,4 +229,265 @@ Need to DERIVE a value from state?
 ```
 ### watch
 
-### effect
+`watch()` **reactively watches** changes to reactive sources (refs, reactive objects, or getters) and executes a callback when they change.
+
+**Core behavior:**
+- **Lazy** — only triggers after the watched value changes (not on initial render)
+- **Per-source** — watches specific sources you declare
+- **Access to old/new values** — callback receives previous and current values
+- **Supports multiple sources** — watch multiple refs or an array of sources
+- **Cleanup** — returns a stopper function to remove the watcher
+
+#### Form 1: Single source — `watch(source, callback)`
+
+When to use: Watching a single ref, reactive object property, or getter return value.
+
+```js
+const count = ref(0)
+
+// Watch a ref
+watch(count, (newVal, oldVal) => {
+  console.log(`count changed: ${oldVal} -> ${newVal}`)
+})
+
+// Watch a getter
+watch(() => count.value * 2, (newVal, oldVal) => {
+  console.log(`doubled changed: ${oldVal} -> ${newVal}`)
+})
+
+// Watch a reactive object property
+const state = reactive({ count: 0 })
+watch(() => state.count, (newVal, oldVal) => {
+  console.log(`state.count changed: ${oldVal} -> ${newVal}`)
+})
+```
+
+#### Form 2: Multiple sources — `watch([source1, source2], callback)`
+
+When to use: When you need to react to changes in any of several sources.
+
+```js
+const firstName = ref('')
+const lastName = ref('')
+
+watch([firstName, lastName], ([newFirst, newLast], [oldFirst, oldLast]) => {
+  console.log(`Name changed: ${oldFirst} ${oldLast} -> ${newFirst} ${newLast}`)
+}, { immediate: false })
+```
+
+#### Form 3: With options — `{ immediate, deep, flush, onTrigger }`
+
+When to use: Fine-tuning watch behavior for specific needs.
+
+```js
+const options = {
+  immediate: false,     // Run callback immediately on mount (default: false)
+  deep: false,        // Deep watch nested properties (default: false)
+  flush: 'pre',       // 'pre' | 'post' | 'sync' — when callback runs
+  onTrigger: null     // Debugging hook for dependencies
+}
+
+// Deep watch a reactive object
+const state = reactive({ nested: { count: 0 } })
+watch(state, (newVal) => {
+  console.log('state changed deeply')
+}, { deep: true })
+
+// Immediate watch (runs on mount)
+watch(name, (newVal) => {
+  fetchUser(newVal)
+}, { immediate: true })
+```
+
+#### Common Gotchas
+
+1. **Watch vs watchEffect** — `watch` is lazy (doesn't run on mount unless `immediate: true`), `watchEffect` runs immediately and auto-tracks dependencies
+2. **Deep watching performance** — `deep: true` can be expensive; consider using computed properties instead
+3. **Reactive object vs getter** — watching a reactive object directly only triggers on reference change, not nested changes (unless `deep: true`)
+   ```js
+   const state = reactive({ count: 0 })
+   watch(state, ...)           // Only triggers when state = newObject
+   watch(() => state.count, ...) // ✅ Triggers on nested change
+   ```
+4. **Old value in immediate watch** — `oldVal` is `undefined` on the first call with `immediate: true`
+5. **Async watchers** — use `async` callback, but be aware of race conditions (use cancellation tokens or `watchEffect` with `onInvalidate`)
+
+#### Quick Decision Guide
+```typescript
+Need to REACT to state changes with side effects?
+  └── Need OLD and NEW values access? → watch(source, cb)
+       └── Multiple sources? → watch([source1, source2], cb)
+       └── Run on mount too? → watch(source, cb, { immediate: true })
+  └── Don't need old/new values? → watchEffect(cb)
+```
+
+---
+
+### watchEffect
+
+`watchEffect()` executes a **side effect immediately** while **automatically tracking its dependencies**. Re-runs whenever any dependency changes.
+
+**Core behavior:**
+- **Eager** — runs immediately on mount
+- **Auto-tracking** — automatically discovers which reactive data it uses
+- **No old/new values** — callback doesn't receive previous values
+- **Cleanup** — register cleanup logic via `onInvalidate` callback
+
+#### Form 1: Basic usage — `watchEffect(() => { ... })`
+
+When to use: Most common form. Running side effects that depend on reactive state.
+
+```js
+const count = ref(0)
+const name = ref('John')
+
+watchEffect(() => {
+  console.log(`Count is: ${count.value}, Name is: ${name.value}`)
+})
+// Runs immediately, then again whenever count or name changes
+```
+
+#### Form 2: With cleanup — `watchEffect(async (onInvalidate) => { ... })`
+
+When to use: When the effect initiates async operations that need cancellation/cleanup.
+
+```js
+const userId = ref(1)
+
+watchEffect(async (onInvalidate) => {
+  const controller = new AbortController()
+  
+  onInvalidate(() => controller.abort())  // Cleanup on stop or re-run
+  
+  const response = await fetch(`/api/user/${userId.value}`, {
+    signal: controller.signal
+  })
+  const user = await response.json()
+  console.log(user)
+})
+```
+
+#### Form 3: Flushed timing — `{ flush: 'pre' | 'post' | 'sync' }`
+
+When to use: Controlling when the effect runs relative to component updates.
+
+```js
+// 'pre' (default): runs before DOM update
+watchEffect(() => {
+  console.log(count.value)  // runs before re-render
+}, { flush: 'pre' })
+
+// 'post': runs after DOM update
+watchEffect(() => {
+  console.log(document.querySelector('div').textContent)  // safe to access DOM
+}, { flush: 'post' })
+
+// 'sync': runs synchronously on every dependency change
+watchEffect(() => {
+  console.log(count.value)  // runs immediately
+}, { flush: 'sync' })
+```
+
+#### Common Gotchas
+
+1. **No old value access** — if you need previous values, use `watch()`
+2. **Auto-tracking scope** — only tracks dependencies accessed synchronously during execution
+   ```js
+   watchEffect(() => {
+     setTimeout(() => {
+       console.log(count.value)  // ⚠️ NOT tracked!
+     }, 1000)
+   })
+   ```
+3. **Conditional access** — dependencies inside conditional branches may not track correctly
+4. **Mutations vs reassignments** — watching computed properties that derive from the same source may behave unexpectedly
+5. **Stop function** — call the returned function to stop watching
+   ```js
+   const stop = watchEffect(() => console.log(count.value))
+   stop()  // stops the watcher
+   ```
+
+#### Quick Decision Guide
+```typescript
+Need to RUN side effects when dependencies change?
+  └── Need OLD and NEW values? → watch(source, cb)
+  └── Don't need old/new values? → watchEffect(cb)
+       └── Need cleanup for async ops? → watchEffect(async (onInvalidate) => {})
+       └── Need specific timing? → watchEffect(cb, { flush: 'post' })
+```
+
+---
+
+### effect (Advanced)
+
+`effect()` is a **low-level reactivity primitive** that runs a side effect function **synchronously** whenever its dependencies change. It's the building block that powers `watchEffect` internally.
+
+**Core behavior:**
+- **Low-level** — rarely used directly in application code
+- **Synchronous** — runs immediately on dependency change
+- **Global tracking** — uses Vue's internal dependency tracking system
+- **Does not auto-stop** — must be manually stopped with the returned function
+
+#### Form 1: Basic effect — `effect(() => { ... })`
+
+When to use: Low-level reactivity work, Vue internals, or libraries.
+
+```js
+import { effect, ref } from 'vue'
+
+const count = ref(0)
+
+const stop = effect(() => {
+  console.log('Effect triggered:', count.value)
+})
+
+count.value = 1  // logs: "Effect triggered: 1"
+count.value = 2  // logs: "Effect triggered: 2"
+
+stop()  // stop the effect
+```
+
+#### Form 2: Effect with scheduler — `effect(() => {}, { scheduler })`
+
+When to use: Fine-grained control over when the effect runs.
+
+```js
+import { effect, ref } from 'vue'
+
+const count = ref(0)
+
+effect(() => {
+  console.log('Count:', count.value)
+}, {
+  scheduler: (job) => {
+    // Runs instead of the effect when count changes
+    console.log('Scheduled:', count.value)
+  }
+})
+
+count.value = 1  // logs: "Scheduled: 1" (not the effect itself)
+```
+
+#### Common Gotchas
+
+1. **Prefer `watch` / `watchEffect`** — `effect()` is a low-level API; most application code should use `watch` or `watchEffect`
+2. **No automatic cleanup** — always store and call the `stop` function
+3. **Debugging only** — `onTrack` / `onTrigger` options are useful for debugging dependency tracking
+   ```js
+   effect(() => {
+     console.log(count.value)
+   }, {
+     onTrack: (event) => console.log('Tracking:', event),
+     onTrigger: (event) => console.log('Triggering:', event)
+   })
+   ```
+4. **Nested effects** — nested `effect()` calls are supported but can cause infinite loops if effects trigger each other
+
+#### Quick Decision Guide
+```typescript
+Building a LIBRARY or working with Vue INTERNALS?
+  └── Yes → effect(() => ...)
+  └── No → Use watch() or watchEffect() instead
+```
+
+---
