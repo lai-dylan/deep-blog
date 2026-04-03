@@ -1,9 +1,9 @@
 ---
-title: Vue3 APIs
+title: Vue3 Reactivity API
 date: 2026-04-03
 tags: [Vue]
 ---
-## Reactivity API
+## Reactivity Core
 
 ### reactive
 
@@ -706,3 +706,557 @@ watch(searchQuery, async (query) => {
    watchEffect(() => {
      onWatcherCleanup(() => cleanup())
    })
+
+## Reactivity Advanced
+
+### shallowReactive
+
+`shallowReactive()` creates a **shallow reactive proxy** where only top-level properties are reactive. Nested objects are NOT deeply reactive.
+
+**Core behavior:**
+- **Shallow reactivity** — only the root properties are reactive
+- **Nested objects are plain** — not converted to reactive proxies
+- **Better performance** — avoids deep proxy overhead for large objects
+
+#### When to use: Large objects where deep reactivity is unnecessary
+
+```js
+const state = shallowReactive({
+  count: 0,
+  nested: { value: 1 }  // nested is NOT reactive
+})
+
+state.count = 5       // ✅ Triggers update
+state.nested.value = 5 // ❌ Does NOT trigger update
+state.nested = { value: 10 } // ✅ Replaces the whole nested object
+```
+
+#### Comparison with reactive
+
+| Behavior | reactive() | shallowReactive() |
+|----------|-----------|------------------|
+| Top-level reactivity | ✅ | ✅ |
+| Nested reactivity | ✅ Deep | ❌ Shallow |
+
+---
+
+### shallowReadonly
+
+`shallowReadonly()` creates a **shallow readonly proxy** where only top-level properties are readonly. Nested objects can still be modified.
+
+**Core behavior:**
+- **Shallow readonly** — only top-level properties are readonly
+- **Nested objects remain mutable** — but reassignment at root is blocked
+- **Use with shallowReactive** — often paired for performance-sensitive cases
+
+#### When to use: Exposing state where nested mutations are intentional
+
+```js
+const state = shallowReadonly({
+  count: 0,
+  nested: { value: 1 }
+})
+
+state.count = 5     // ❌ Warning: cannot modify readonly
+state.nested.value = 5  // ✅ Works! Nested is still mutable
+state.nested = {}  // ❌ Warning: cannot modify readonly
+```
+
+---
+
+### shallowRef
+
+`shallowRef()` creates a ref where the `.value` itself is reactive, but the contents inside are NOT deeply reactive.
+
+**Core behavior:**
+- **Shallow tracking** — only `.value` reassignment triggers updates
+- **Mutations to .value contents** — do NOT trigger updates
+- **Use `triggerRef()`** — to manually force updates when mutating contents
+
+#### When to use: Large arrays/objects where deep tracking is expensive
+
+```js
+const arr = shallowRef([1, 2, 3])
+
+arr.value.push(4)        // ❌ Does NOT trigger updates
+arr.value = [1, 2, 3, 4] // ✅ Reassignment triggers update
+
+// Or force trigger manually
+triggerRef(arr)  // Force update
+```
+
+---
+
+### markRaw
+
+`markRaw()` marks an object as **not reactive**. The object will never be converted to a reactive proxy.
+
+**Core behavior:**
+- **Permanent** — cannot be unwrapped (object is permanently raw)
+- **Deep** — the entire object and nested objects are non-reactive
+- **For performance** — avoid proxy overhead for large static objects
+
+#### When to use: Large static objects that should never be reactive
+
+```js
+const staticData = markRaw({
+  id: 1,
+  items: [1, 2, 3],
+  nested: { key: 'value' }
+})
+
+const state = reactive({
+  data: staticData  // ❌ Not reactive, stays plain object
+})
+
+// Mutations to staticData won't trigger reactivity
+staticData.items.push(4)  // Won't update
+state.data.items.push(4)   // Won't update
+```
+
+#### Common Gotchas
+
+1. **Don't mix with reactive** — objects marked raw inside reactive still won't be tracked
+   ```js
+   const raw = markRaw({ count: 0 })
+   const state = reactive({ raw })
+   state.raw.count = 10  // ⚠️ Won't trigger updates
+   ```
+2. **Can still be mutated** — markRaw only prevents proxy conversion, not mutation
+3. **Check with `isRaw()`** — use to check if an object was marked raw
+
+---
+
+### toRaw
+
+`toRaw()` retrieves the **original raw object** from a reactive or readonly proxy.
+
+**Core behavior:**
+- **Unwrap proxy** — returns the original plain object
+- **One level only** — doesn't unwrap nested proxies
+- **Does not trigger reactivity** — accessing raw object directly
+
+#### When to use: Getting the underlying object from a proxy
+
+```js
+const state = reactive({ count: 0 })
+const raw = toRaw(state)
+
+console.log(raw === state) // ❌ false (different objects)
+console.log(raw.count)     // 0
+
+raw.count = 10
+console.log(state.count)  // 0 (mutating raw doesn't affect reactive)
+```
+
+#### Common Gotchas
+
+1. **Not recursive** — only unwraps one level
+   ```js
+   const nested = reactive({ inner: reactive({ count: 0 }) })
+   const raw = toRaw(nested)
+   toRaw(raw.inner)  // Still a proxy
+   ```
+2. **Only works on Vue proxies** — plain objects passed to toRaw return undefined
+
+---
+
+### triggerRef
+
+`triggerRef()` **manually triggers** updates for a `shallowRef`.
+
+**Core behavior:**
+- **Force update** — used with shallowRef to trigger updates when mutating contents
+- **Does not set value** — only forces re-render
+
+#### When to use: With shallowRef when mutating .value contents
+
+```js
+const arr = shallowRef([1, 2, 3])
+
+function addItem(item) {
+  arr.value.push(item)   // ❌ Won't trigger
+  triggerRef(arr)       // ✅ Force update
+}
+
+function updateItem(index, value) {
+  arr.value[index] = value  // ❌ Won't trigger
+  triggerRef(arr)           // ✅ Force update
+}
+```
+
+#### Common Gotchas
+
+1. **Only for shallowRef** — not needed for regular ref (mutations trigger automatically)
+2. **Performance** — don't overuse; prefer ref() for most cases
+
+---
+
+### customRef
+
+`customRef()` creates a **custom ref** with explicit tracking and update logic. Useful for debouncing, throttling, or custom storage.
+
+**Core behavior:**
+- **Factory function** — receives a `track` and `trigger` function
+- **Full control** — you decide when to trigger updates
+- **Debounce/throttle ready** — ideal for input handling
+
+#### Form 1: Debounced ref — Custom tracking
+
+When to use: Debouncing input values to avoid excessive updates.
+
+```js
+function useDebouncedRef(value, delay = 300) {
+  let timeout
+  return customRef((track, trigger) => {
+    return {
+      get() {
+        track()  // Tell Vue to track this dependency
+        return value
+      },
+      set(newValue) {
+        clearTimeout(timeout)
+        timeout = setTimeout(() => {
+          value = newValue
+          trigger()  // Tell Vue to update
+        }, delay)
+      }
+    }
+  })
+}
+
+const searchQuery = useDebouncedRef('', 500)
+```
+
+#### Form 2: Synchronized ref — Custom storage
+
+When to use: Syncing with external storage or state management.
+
+```js
+function useLocalStorage(key, initialValue) {
+  const stored = localStorage.getItem(key) || initialValue
+  return customRef((track, trigger) => {
+    return {
+      get() {
+        track()
+        return stored
+      },
+      set(newValue) {
+        stored = newValue
+        localStorage.setItem(key, newValue)
+        trigger()
+      }
+    }
+  })
+}
+
+const theme = useLocalStorage('theme', 'dark')
+```
+
+#### Common Gotchas
+
+1. **Must call `track()`** — in getter, or the ref won't be tracked by watchers
+2. **Must call `trigger()`** — in setter, or changes won't trigger updates
+3. **Sync vs async** — can use async operations in setter but remember cleanup
+
+---
+
+### effectScope
+
+`effectScope()` creates a **scoped area** for reactive effects. All effects created within the scope can be stopped together.
+
+**Core behavior:**
+- **Group effects** — stop multiple related effects at once
+- **Independent scopes** — effects in different scopes don't interfere
+- **Returns stop function** — call to dispose all effects in scope
+
+#### Form 1: Basic usage — Group related effects
+
+When to use: Composable functions that manage multiple effects.
+
+```js
+import { effectScope, ref, watchEffect } from 'vue'
+
+function useCounter() {
+  const count = ref(0)
+  const scope = effectScope()
+  
+  // All these effects are in the same scope
+  scope.run(() => {
+    watchEffect(() => console.log('Effect 1:', count.value))
+    watchEffect(() => console.log('Effect 2:', count.value * 2))
+  })
+  
+  // Stop all effects in scope
+  scope.stop()
+  
+  return { count }
+}
+```
+
+#### Form 2: With computed — Scoped computations
+
+When to use: Computed properties that should be disposed together.
+
+```js
+function useSearch(query) {
+  const results = ref([])
+  const scope = effectScope()
+  
+  const filtered = scope.run(() => computed(() => {
+    return allItems.filter(item => item.includes(query.value))
+  }))
+  
+  // Cleanup: stop scope when component unmounts
+  onUnmounted(() => scope.stop())
+  
+  return { results, filtered }
+}
+```
+
+#### Common Gotchas
+
+1. **Scope isolation** — effects in one scope don't trigger updates in another
+2. **Nested scopes** — child scopes can be created but parent stop doesn't affect them
+3. **Always stop** — memory leaks if scope.stop() is never called
+
+---
+
+## Reactivity Utilities
+
+### isRef
+
+`isRef()` checks if a value is a **ref object**.
+
+**Core behavior:**
+- Returns `true` if the value is a ref
+- Returns `false` otherwise (including unwrapped values)
+
+#### When to use: Type checking or conditional logic
+
+```js
+const count = ref(0)
+const plain = 0
+
+console.log(isRef(count)) // ✅ true
+console.log(isRef(plain)) // ❌ false
+
+// Common in composables
+function useData() {
+  const data = ref(null)
+  
+  if (isRef(data)) {
+    console.log('data is a ref')
+  }
+  
+  return data
+}
+```
+
+---
+
+### isReactive
+
+`isReactive()` checks if an object is a **reactive proxy** created by `reactive()` or `shallowReactive()`.
+
+**Core behavior:**
+- Returns `true` if the object is a reactive proxy
+- Returns `false` for plain objects or readonly proxies
+
+#### When to use: Debugging or type checking
+
+```js
+const state = reactive({ count: 0 })
+const plain = { count: 0 }
+const readOnly = readonly(state)
+
+console.log(isReactive(state))    // ✅ true
+console.log(isReactive(plain))   // ❌ false
+console.log(isReactive(readOnly)) // ❌ false (it's readonly, not reactive)
+```
+
+---
+
+### isReadonly
+
+`isReadonly()` checks if an object is a **readonly proxy** created by `readonly()` or `shallowReadonly()`.
+
+**Core behavior:**
+- Returns `true` if the object is a readonly proxy
+- Returns `false` for plain objects or regular reactive proxies
+
+#### When to use: Type checking or validation
+
+```js
+const state = reactive({ count: 0 })
+const readOnly = readonly(state)
+const plain = { count: 0 }
+
+console.log(isReadonly(state))    // ❌ false
+console.log(isReadonly(readOnly)) // ✅ true
+console.log(isReadonly(plain))   // ❌ false
+```
+
+---
+
+### isProxy
+
+`isProxy()` checks if an object is a **Vue proxy** (reactive, readonly, shallow, or computed).
+
+**Core behavior:**
+- Returns `true` for any Vue reactive proxy
+- Returns `false` for plain objects
+
+#### When to use: General proxy detection
+
+```js
+const state = reactive({ count: 0 })
+const readOnly = readonly(state)
+const shallow = shallowReactive({ count: 0 })
+const plain = { count: 0 }
+
+console.log(isProxy(state))    // ✅ true
+console.log(isProxy(readOnly)) // ✅ true
+console.log(isProxy(shallow))  // ✅ true
+console.log(isProxy(plain))    // ❌ false
+```
+
+#### Quick Decision Guide
+```typescript
+What type of proxy?
+  └── readonly? → isReadonly()
+  └── reactive/shallow? → isReactive()
+  └── Any Vue proxy? → isProxy()
+  └── ref specifically? → isRef()
+```
+
+---
+
+### unref
+
+`unref()` returns the **inner value** of a ref, or the value itself if it's not a ref.
+
+**Core behavior:**
+- Unwraps refs automatically
+- Returns plain values unchanged
+- Equivalent to `isRef(val) ? val.value : val`
+
+#### When to use: Inside functions that accept both refs and plain values
+
+```js
+function increment(value) {
+  const unwrapped = unref(value)
+  // If value is ref, unwrapped is value.value
+  // If value is plain, unwrapped is value itself
+  console.log(unwrapped)
+}
+
+const count = ref(0)
+increment(count)  // logs 0
+increment(5)      // logs 5
+```
+
+#### Common Gotchas
+
+1. **Template auto-unwrapping** — refs are auto-unwrapped in templates, but not in script
+2. **With computed** — `unref(computed)` returns the computed value
+
+---
+
+### toRef
+
+`toRef()` creates a **ref** that is a reference to a specific property of a reactive object. The ref stays in sync with the reactive source.
+
+**Core behavior:**
+- **Reactive sync** — changes to the source property update the ref
+- **Changes reflect back** — modifying the ref updates the source
+- **Destructuring safe** — preserves reactivity when extracting single property
+
+#### When to use: Extracting a single property from reactive object
+
+```js
+const state = reactive({ count: 0, name: 'John' })
+
+// Create ref to specific property
+const count = toRef(state, 'count')
+
+console.log(count.value) // 0
+state.count = 5
+console.log(count.value) // 5 (synced!)
+
+count.value = 10
+console.log(state.count) // 10 (reflects back!)
+```
+
+---
+
+### toRefs
+
+`toRefs()` converts a **reactive object to an object of refs**. Each property becomes a ref pointing to the corresponding property.
+
+**Core behavior:**
+- **Destructuring safe** — all refs stay synced with original
+- **Preserves reactivity** — when spreading or destructuring
+- **ToRefs pairs with toRaw** — use together for plain object operations
+
+#### When to use: Destructuring reactive objects safely
+
+```js
+const state = reactive({ count: 0, name: 'John', age: 30 })
+
+// Convert to refs
+const { count, name, age } = toRefs(state)
+
+// Safe to destructure and use independently
+console.log(count.value) // 0
+state.count = 5
+console.log(count.value) // 5 (stays synced!)
+
+// Modify through ref
+count.value = 10
+console.log(state.count) // 10 (reflects back!)
+```
+
+#### Common Gotchas
+
+1. **Partial destructuring** — unaccessed properties remain reactive
+   ```js
+   const { count } = toRefs(state)  // name and age still have refs but unused
+   ```
+2. **Original vs ref** — use `toRaw` on refs if you need the plain object
+3. **Arrays** — `toRefs` on arrays creates refs to array items
+
+---
+
+### toValue
+
+`toValue()` returns the **value of a ref, computed, or plain value**. Similar to `unref` but also handles computed refs.
+
+**Core behavior:**
+- Unwraps refs and computed values
+- Returns plain values unchanged
+- Shorthand for reactive state access
+
+#### When to use: In composables or utility functions
+
+```js
+const count = ref(0)
+const doubled = computed(() => count.value * 2)
+
+console.log(toValue(count))     // 0
+console.log(toValue(doubled))  // 0 (computed value)
+console.log(toValue(5))        // 5
+
+// In a composable
+function useSum(a, b) {
+  return computed(() => toValue(a) + toValue(b))
+}
+```
+
+#### Comparison: unref vs toValue
+| Function | ref | computed | plain |
+|----------|-----|----------|-------|
+| `unref()` | ✅ `.value` | ❌ returns ref | ✅ returns as-is |
+| `toValue()` | ✅ `.value` | ✅ `.value` | ✅ returns as-is |
+
+---
