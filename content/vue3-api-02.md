@@ -620,4 +620,560 @@ Need to share state with DESCENDANTS?
             └── Need type safety? → inject(Key) with InjectionKey
 ```
 
+## Built-in Directives
+
+### v-bind
+
+`v-bind` dynamically binds one or more attributes or a component prop to an expression.
+
+**Core behavior:**
+- **One-way binding** — data flows down to attribute
+- **Shorthand** — `:` (colon)
+- **Boolean attrs** — removes attribute when falsy
+
+#### Form 1: Basic binding — `:attr="value"`
+
+When to use: Binding a single attribute to a dynamic value.
+
+```vue
+<img :src="imageUrl" :alt="description" />
+<button :disabled="isLoading">Submit</button>
+```
+
+#### Form 2: Object binding — `v-bind="obj"`
+
+When to use: Binding multiple attributes at once.
+
+```vue
+<script setup>
+const attrs = {
+  id: 'my-input',
+  type: 'text',
+  placeholder: 'Enter name',
+  disabled: false
+}
+</script>
+
+<input v-bind="attrs" />
+```
+
+#### Form 3: With modifiers — `.prop .camel .attr`
+
+```vue
+<!-- .attr forces attribute binding (not prop) -->
+<div :data-info.attr="'value'" />
+
+<!-- .camel converts kebab-case to camelCase -->
+<svg :view-box.camel="viewBox" />
+```
+
+---
+
+### v-model
+
+`v-model` creates a **two-way binding** between a value and a form input.
+
+**Core behavior:**
+- **Two-way** — data flows both directions
+- **Input types** — different props/events per input type
+- **Modifiers** — `.lazy`, `.number`, `.trim`
+
+#### Form 1: Basic v-model — `v-model="value"`
+
+When to use: Two-way binding with form inputs.
+
+```vue
+<!-- Text input -->
+<input v-model="name" />
+
+<!-- Checkbox -->
+<input type="checkbox" v-model="checked" />
+
+<!-- Select -->
+<select v-model="selected">
+  <option value="a">A</option>
+  <option value="b">B</option>
+</select>
+```
+
+#### Form 2: With modifiers — `.lazy .number .trim`
+
+```vue
+<!-- Only sync on change event (not input) -->
+<input v-model.lazy="name" />
+
+<!-- Automatically cast to number -->
+<input v-model.number="age" />
+
+<!-- Trim whitespace -->
+<input v-model.trim="username" />
+```
+
+#### Form 3: v-model arguments — `v-model:propName`
+
+When to use: Custom model binding for components.
+
+```vue
+<!-- Component with custom model -->
+<MyInput v-model:title="pageTitle" />
+<MyInput v-model:description="pageDesc" />
+
+<!-- Equivalent to -->
+<MyInput :modelValue="pageTitle" @update:modelValue="pageTitle = $event" />
+```
+
+#### Comparison: v-model vs :value
+
+| Aspect | `v-model` | `:value` + `@input` |
+|--------|-----------|---------------------|
+| Direction | Two-way | One-way (parent→child) |
+| Code | Cleaner | More verbose |
+| Events | Automatic | Manual |
+
+---
+
+### v-on
+
+`v-on` attaches an event listener to an element or component.
+
+**Core behavior:**
+- **Event binding** — listens for DOM/component events
+- **Shorthand** — `@` (at sign)
+- **Modifiers** — `.stop`, `.prevent`, `.enter`, etc.
+
+#### Form 1: Basic binding — `@event="handler"`
+
+When to use: Binding a single event.
+
+```vue
+<button @click="handleClick">Click me</button>
+<input @focus="handleFocus" />
+<form @submit.prevent="handleSubmit">
+```
+
+#### Form 2: Event argument — `@event="handler($arg)"`
+
+When to use: Passing the event or custom arguments.
+
+```vue
+<button @click="handleClick('foo', $event)">Click</button>
+
+<script setup>
+function handleClick(name, event) {
+  console.log(name, event.target)
+}
+</script>
+```
+
+#### Form 3: Multiple events — Object syntax
+
+When to use: Binding multiple events to different handlers.
+
+```vue
+<input
+  @focus="onFocus"
+  @blur="onBlur"
+  @keyup.enter="onSubmit"
+/>
+```
+
+#### Form 4: With modifiers
+
+```vue
+<!-- .stop — stop propagation -->
+<button @click.stop="handleClick">
+
+<!-- .prevent — prevent default -->
+<form @submit.prevent="handleSubmit">
+
+<!-- .capture — use capture mode -->
+<div @click.capture="handleCapture">
+
+<!-- .self — only if target is self -->
+<div @click.self="handleSelf">
+
+<!-- .enter — key modifier -->
+<input @keyup.enter="submit">
+```
+
+#### Event Modifiers Reference
+| Modifier | Description |
+|----------|-------------|
+| `.stop` | `event.stopPropagation()` |
+| `.prevent` | `event.preventDefault()` |
+| `.capture` | Use capture mode |
+| `.self` | Only on target element |
+| `.once` | Only trigger once |
+| `.passive` | Passive event listener |
+| `.enter` | Key: Enter |
+| `.esc` | Key: Escape |
+
+---
+
+### v-for
+
+`v-for` renders a list of items by iterating over an array or object.
+
+**Core behavior:**
+- **List rendering** — creates one element per item
+- **Key binding** — always use `:key` for performance
+- **Scope** — item/index available in body
+
+#### Form 1: Array iteration — `item in items`
+
+When to use: Iterating over an array.
+
+```vue
+<ul>
+  <li v-for="item in items" :key="item.id">
+    {{ item.name }}
+  </li>
+</ul>
+
+<!-- With index -->
+<li v-for="(item, index) in items" :key="item.id">
+  {{ index }}: {{ item.name }}
+</li>
+```
+
+#### Form 2: Object iteration — `(value, key) in object`
+
+When to use: Iterating over an object's properties.
+
+```vue
+<!-- (value, key, index) -->
+<div v-for="(value, key, index) in user" :key="key">
+  {{ index }}. {{ key }}: {{ value }}
+</div>
+```
+
+#### Form 3: Range — `n in count`
+
+When to use: Repeating n times.
+
+```vue
+<span v-for="n in 5" :key="n">{{ n }}</span>
+<!-- 1 2 3 4 5 -->
+```
+
+#### Common Gotchas
+
+1. **Always use `:key`** — without key, Vue can't optimize DOM reuse
+   ```vue
+   <!-- ❌ Bad -->
+   <li v-for="item in items">{{ item.name }}</li>
+   
+   <!-- ✅ Good -->
+   <li v-for="item in items" :key="item.id">{{ item.name }}</li>
+   ```
+2. **Don't use index as key** — causes bugs with dynamic lists
+3. **v-for with v-if** — v-if has higher priority (filtered in Vue 2, use computed in Vue 3)
+
+---
+
+### v-if vs v-show
+
+Both conditionally render elements, but work differently under the hood.
+
+**Core behavior:**
+| Aspect | `v-if` | `v-show` |
+|--------|--------|----------|
+| Method | Add/remove DOM | Toggle CSS `display` |
+| Initial render | Lazy (not rendered) | Eager (always rendered) |
+| Re-render cost | Higher (DOM manipulation) | Lower (CSS toggle) |
+| `<template>` | Supported | Not supported |
+
+#### When to use v-if
+
+```vue
+<!-- Conditional rendering (expensive, rarely changes) -->
+<div v-if="showModal">
+  <HeavyComponent />
+</div>
+```
+
+**Best for:**
+- Rarely changing conditions
+- Heavy components (don't render until needed)
+- `v-else-if` / `v-else` chains
+
+#### When to use v-show
+
+```vue
+<!-- Frequent show/hide (cheap toggle) -->
+<div v-show="isExpanded">
+  <LightweightContent />
+</div>
+```
+
+**Best for:**
+- Frequently toggled visibility
+- Lightweight content
+- Tab switching, dropdowns
+
+#### Quick Decision Guide
+```typescript
+Need to conditionally show/hide?
+  └── Heavy content, rarely changes? → v-if
+  └── Lightweight, frequent toggle? → v-show
+  └── Need v-else? → v-if (v-show has no else)
+```
+
+---
+
+### v-slot
+
+`v-slot` passes template content to child components (scoped slots).
+
+**Core behavior:**
+- **Template passing** — pass templates to components
+- **Scoped data** — receive data from child
+- **Shorthand** — `#` (hash)
+
+#### Form 1: Named slots — `#name="slotProps"`
+
+When to use: Multiple slot outlets in components.
+
+```vue
+<!-- Parent -->
+<MyCard>
+  <template #header>
+    <h1>Title</h1>
+  </template>
+  
+  <template #default="{ user, item }">
+    <p>{{ user.name }}</p>
+    <p>{{ item.description }}</p>
+  </template>
+  
+  <template #footer="props">
+    <p>{{ props.message }}</p>
+  </template>
+</MyCard>
+```
+
+#### Form 2: Dynamic slot — `#[slotName]="props"`
+
+When to use: Dynamic slot names based on data.
+
+```vue
+<BaseLayout>
+  <template #[dynamicSlotName]="props">
+    {{ props.content }}
+  </template>
+</BaseLayout>
+```
+
+#### Form 3: Fallback content — Default slot
+
+```vue
+<!-- Child provides default, parent can override -->
+<SubmitButton>
+  Save changes
+</SubmitButton>
+
+<!-- Or override default -->
+<SubmitButton #default>
+  Custom text
+</SubmitButton>
+```
+
+#### Common Gotchas
+
+1. **# is shorthand for v-slot:** — `v-slot:header` === `#header`
+2. **Dynamic slot names** — must use `v-slot:[name]` or `#[name]`
+3. **`#default` for default slot** — only needed when using both named and default
+
+---
+
+## Custom Directives
+
+### Custom Directive Overview
+
+Custom directives are functions prefixed with `v-` that allow direct DOM manipulation.
+
+**Core behavior:**
+- **生命周期 hooks** — `mounted`, `updated`, `unmounted`, etc.
+- **Passed values** — `binding.value`, `binding.arg`, `binding.modifiers`
+- **Global/local** — register globally or per-component
+
+#### Directive Hook Object
+
+```ts
+interface DirectiveHook {
+  // Called before parent component is mounted
+  beforeMount?(el: HTMLElement, binding: DirectiveBinding, vnode: VNode): void
+  // Called after parent component is mounted
+  mounted?(el: HTMLElement, binding: DirectiveBinding, vnode: VNode): void
+  // Called before parent component updates
+  beforeUpdate?(el: HTMLElement, binding: DirectiveBinding, vnode: VNode): void
+  // Called after parent component updates
+  updated?(el: HTMLElement, binding: DirectiveBinding, vverse: VNode): void
+  // Called before parent component is unmounted
+  beforeUnmount?(el: HTMLElement, binding: DirectiveBinding, vnode: VNode): void
+  // Called after parent component is unmounted
+  unmounted?(el: HTMLElement, binding: DirectiveBinding, vnode: VNode): void
+}
+```
+
+---
+
+### Form 1: Local directive — `directives: {}`
+
+When to use: Component-specific directive.
+
+```vue
+<script setup>
+const vFocus = {
+  mounted: (el) => el.focus()
+}
+</script>
+
+<template>
+  <input v-focus />
+</template>
+```
+
+---
+
+### Form 2: Global directive — `app.directive()`
+
+When to use: Application-wide directive.
+
+```js
+// main.ts
+const app = createApp(App)
+
+app.directive('focus', {
+  mounted: (el) => el.focus()
+})
+
+app.directive('click-outside', {
+  mounted(el, binding) {
+    el._clickOutside = (event) => {
+      if (!el.contains(event.target)) {
+        binding.value(event)
+      }
+    }
+    document.addEventListener('click', el._clickOutside)
+  },
+  unmounted(el) {
+    document.removeEventListener('click', el._clickOutside)
+  }
+})
+
+app.mount('#app')
+```
+
+---
+
+### Form 3: Directive with binding — Accessing values
+
+```js
+// Usage: <div v-color:[color]="value" />
+
+app.directive('color', {
+  mounted(el, binding) {
+    // binding.arg = 'color' (the argument)
+    // binding.value = 'red' (the value passed)
+    el.style.setProperty(binding.arg, binding.value)
+  },
+  updated(el, binding) {
+    el.style.setProperty(binding.arg, binding.value)
+  }
+})
+```
+
+#### Binding Object Properties
+
+| Property | Description |
+|----------|-------------|
+| `binding.value` | The value passed (`v-dir="value"`) |
+| `binding.arg` | The argument (`v-dir:arg`) |
+| `binding.modifiers` | Modifiers object (`v-dir.mod.foo`) |
+| `binding.instance` | The component instance |
+| `binding.dir` | The directive object itself |
+
+---
+
+### Form 4: Functional directive — Shorthand
+
+When to use: Simple directive that only needs `mounted` and `updated`.
+
+```js
+// v-highlight
+app.directive('highlight', (el, binding) => {
+  el.style.backgroundColor = binding.value
+})
+```
+
+---
+
+### Common Patterns
+
+#### Pattern 1: Click outside
+
+```js
+app.directive('click-outside', {
+  mounted(el, binding) {
+    el._clickOutside = (event) => {
+      if (!el.contains(event.target)) {
+        binding.value(event)
+      }
+    }
+    document.addEventListener('click', el._clickOutside)
+  },
+  unmounted(el) {
+    document.removeEventListener('click', el._clickOutside)
+  }
+})
+```
+
+#### Pattern 2: Focus management
+
+```js
+app.directive('focus', {
+  mounted(el) {
+    el.focus()
+  }
+})
+```
+
+#### Pattern 3: Scroll detection
+
+```js
+app.directive('on-scroll', {
+  mounted(el, binding) {
+    el._scrollHandler = () => {
+      if (isInViewport(el)) {
+        binding.value()
+      }
+    }
+    window.addEventListener('scroll', el._scrollHandler)
+  },
+  unmounted(el) {
+    window.removeEventListener('scroll', el._scrollether)
+  }
+})
+```
+
+---
+
+### Common Gotchas
+
+1. **Setup vs Options API** — In `<script setup>`, use `vFocus` (camelCase); in Options API, use `'v-focus'`
+2. **Performance** — Directives run on every render; keep them lightweight
+3. **Timing** — `mounted` runs after parent but before children
+4. **Arguments vs Modifiers** — `v-dir:arg.mod` has arg as `binding.arg` and modifiers in `binding.modifiers`
+5. **Don't misuse** — Most things directives can do, components can do better in Vue 3
+
+#### Quick Decision Guide
+```typescript
+Need to MANIPULATE DOM directly?
+  └── Simple, reusable behavior? → Custom directive
+       └── Component-specific? → Local directive
+       └── App-wide? → Global directive
+  └── Complex behavior with state? → Consider a component instead
+```
+
 ---
