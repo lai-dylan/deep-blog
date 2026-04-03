@@ -159,6 +159,85 @@ Need to wrap a value reactively?
 
 ---
 
+### readonly
+
+`readonly()` creates a **deeply readonly proxy** of a reactive object. Attempts to modify it will throw a warning.
+
+**Core behavior:**
+- **Deep readonly** — nested properties are also readonly
+- **Original still reactive** — modifications to original work, only proxy is blocked
+- **Works with any object** — refs, reactive objects, plain objects
+- **No `.value` needed** — like reactive, access properties directly
+
+#### Form 1: Wrap reactive — `readonly(reactive(obj))`
+
+When to use: Preventing mutations from child components while allowing parent modifications.
+
+```js
+const state = reactive({ count: 0, nested: { value: 1 } })
+const readOnly = readonly(state)
+
+state.count = 5     // ✅ Original is still mutable
+readOnly.count = 5  // ❌ Warning: cannot modify readonly
+readOnly.nested.value = 5  // ❌ Warning: nested also readonly
+```
+
+#### Form 2: Wrap ref — `readonly(ref)`
+
+When to use: Exposing a ref as readonly to prevent external modifications.
+
+```js
+const count = ref(0)
+const readOnlyCount = readonly(count)
+
+count.value = 5      // ✅ Original still mutable
+readOnlyCount.value = 5  // ❌ Warning: cannot modify readonly
+```
+
+#### Form 3: Readonly vs shallowReadonly
+
+```js
+const state = reactive({ nested: { value: 1 } })
+
+const deep = readonly(state)
+deep.nested.value = 5  // ❌ Warning: cannot modify readonly
+
+const shallow = shallowReadonly(state)
+shallow.nested.value = 5  // ✅ Works! Only top-level is readonly
+shallow.value = 5  // ❌ Warning: cannot modify readonly
+```
+
+#### Common Gotchas
+
+1. **Readonly is not frozen** — nested reactive objects remain reactive, just can't be reassigned
+   ```js
+   const state = reactive({ items: [1, 2, 3] })
+   const readOnly = readonly(state)
+   
+   readOnly.items.push(4)  // ⚠️ Works! Array is still reactive
+   readOnly.items = []     // ❌ Warning: cannot modify readonly
+   ```
+2. **Original vs proxy** — readonly only affects the proxy, original can still change
+   ```js
+   const state = reactive({ count: 0 })
+   const readOnly = readonly(state)
+   
+   state.count = 10  // ✅ Original changes
+   console.log(readOnly.count) // 10 — proxy reflects original change
+   ```
+3. **Deep nesting** — use `shallowReadonly` if you only want top-level protection
+4. **Readonly refs** — when wrapping a ref, access via `.value`
+
+#### Quick Decision Guide
+```typescript
+Need to PREVENT modifications to state?
+  └── Deep protection (nested too)? → readonly(reactive(obj))
+  └── Shallow protection (top-level only)? → shallowReadonly(obj)
+  └── Just a ref? → readonly(ref)
+```
+
+---
+
 ### computed
 
 `computed()` creates a **reactive, cached value** derived from other reactive data (refs or reactive objects).
@@ -491,3 +570,139 @@ Building a LIBRARY or working with Vue INTERNALS?
 ```
 
 ---
+
+### watchPostEffect
+
+`watchPostEffect()` is a **syntactic sugar** for `watchEffect()` with `{ flush: 'post' }`. It runs the effect **after** the component's DOM updates.
+
+**Core behavior:**
+- **Alias for** `watchEffect(() => {}, { flush: 'post' })`
+- **Runs after DOM update** — safe to access DOM elements
+- **Eager** — runs immediately on mount and re-runs on dependency changes
+
+#### When to use: DOM access after state change
+
+```js
+const count = ref(0)
+
+// ✅ Safe: access DOM after update
+watchPostEffect(() => {
+  console.log(document.querySelector('.count')?.textContent)  // DOM is updated
+})
+
+count.value++  // Effect runs AFTER DOM updates
+```
+
+**Comparison with other flush options:**
+| API | Flush | Use case |
+|-----|-------|----------|
+| `watchEffect()` | `'pre'` (default) | Most cases, before DOM update |
+| `watchPostEffect()` | `'post'` | Need DOM access after update |
+| `watchSyncEffect()` | `'sync'` | Need immediate synchronous response |
+
+---
+
+### watchSyncEffect
+
+`watchSyncEffect()` is a **syntactic sugar** for `watchEffect()` with `{ flush: 'sync' }`. It runs the effect **synchronously** on every dependency change.
+
+**Core behavior:**
+- **Alias for** `watchEffect(() => {}, { flush: 'sync' })`
+- **Synchronous** — runs immediately when dependencies change
+- **No batching** — unlike `watchPostEffect` or default `watchEffect`
+- **Eager** — runs immediately on mount
+
+#### When to use: Immediate synchronous updates
+
+```js
+const count = ref(0)
+
+// ⚠️ Use sparingly — runs synchronously on EVERY change
+watchSyncEffect(() => {
+  console.log('Sync:', count.value)
+})
+
+count.value++  // logs immediately
+count.value++  // logs immediately (no batching)
+```
+
+**Warning:** Can cause performance issues if the effect is expensive. Prefer `watchEffect()` or `watchPostEffect()` unless you specifically need synchronous behavior.
+
+---
+
+### onWatcherCleanup
+
+`onWatcherCleanup()` registers a **cleanup function** that's called when the watcher is invalidated (stopped or re-run). It's the modern replacement for the `onInvalidate` callback in `watchEffect`.
+
+**Core behavior:**
+- **Called on cleanup** — when watcher stops or runs again
+- **Works with `watch()` and `watchEffect()`** — register cleanup inside the callback
+- **Can be called multiple times** — register multiple cleanup handlers
+
+#### Form 1: With watchEffect — `onWatcherCleanup(cleanupFn)`
+
+```js
+const userId = ref(1)
+
+watchEffect(() => {
+  const controller = new AbortController()
+  
+  onWatcherCleanup(() => controller.abort())
+  
+  fetch(`/api/user/${userId.value}`, { signal: controller.signal })
+    .then(res => res.json())
+    .then(data => console.log(data))
+})
+
+// When userId changes or watcher stops, controller.abort() is called
+```
+
+#### Form 2: With watch — `onWatcherCleanup(cleanupFn)`
+
+```js
+const searchQuery = ref('')
+
+watch(searchQuery, async (query) => {
+  const controller = new AbortController()
+  
+  onWatcherCleanup(() => controller.abort())
+  
+  if (!query) return
+  
+  const results = await fetch(`/api/search?q=${query}`, {
+    signal: controller.signal
+  }).then(res => res.json())
+  
+  console.log(results)
+}, { immediate: true })
+
+// When searchQuery changes, previous fetch is cancelled
+```
+
+#### Common Gotchas
+
+1. **Must be called synchronously** — inside the watcher callback, not in async handlers
+   ```js
+   // ❌ Wrong
+   watch(count, async (val) => {
+     onWatcherCleanup(() => cleanup())  // Cannot be called here
+   })
+   
+   // ✅ Correct
+   watch(count, (val) => {
+     const controller = new AbortController()
+     onWatcherCleanup(() => controller.abort())
+     // Now safe to do async work
+   })
+   ```
+2. **Old pattern vs new** — `onInvalidate` (callback param) vs `onWatcherCleanup` (registered function)
+   ```js
+   // Old way (still works)
+   watchEffect(async (onInvalidate) => {
+     onInvalidate(() => cleanup())
+   })
+   
+   // New way (cleaner)
+   watchEffect(() => {
+     onWatcherCleanup(() => cleanup())
+   })
