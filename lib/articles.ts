@@ -5,24 +5,36 @@ import { Article } from './types'
 
 const contentDirectory = path.join(process.cwd(), 'content')
 
+function getAllMdFiles(dir: string): string[] {
+  const results: string[] = []
+  const entries = fs.readdirSync(dir, { withFileTypes: true })
+  
+  for (const entry of entries) {
+    const fullPath = path.join(dir, entry.name)
+    if (entry.isDirectory()) {
+      results.push(...getAllMdFiles(fullPath))
+    } else if (entry.name.endsWith('.md')) {
+      results.push(fullPath)
+    }
+  }
+  return results
+}
+
 export function getAllArticles(): Article[] {
   if (!fs.existsSync(contentDirectory)) {
     return []
   }
 
-  const files = fs.readdirSync(contentDirectory)
+  const files = getAllMdFiles(contentDirectory)
   const articles: Article[] = []
 
-  for (const file of files) {
-    if (!file.endsWith('.md')) continue
-
-    const filePath = path.join(contentDirectory, file)
+  for (const filePath of files) {
     const fileContents = fs.readFileSync(filePath, 'utf8')
     const { data, content } = matter(fileContents)
 
-    const slug = data.slug || file.replace(/\.md$/, '')
+    const slug = data.slug 
+      || filePath.replace(contentDirectory + '/', '').replace(/\.md$/, '')
     
-    // Ensure date is always a string
     let dateStr: string
     if (data.date) {
       if (data.date instanceof Date) {
