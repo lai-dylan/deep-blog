@@ -11,19 +11,20 @@ import Link from 'next/link'
 import { Components } from 'react-markdown'
 
 interface Props {
-  params: Promise<{ slug: string }>
+  params: Promise<{ slug: string[] }>
 }
 
 export async function generateStaticParams() {
   const articles = getAllArticles()
   return articles.map(article => ({
-    slug: article.slug,
+    slug: article.slug.split('/'),
   }))
 }
 
 export async function generateMetadata({ params }: Props) {
   const { slug } = await params
-  const article = getArticleBySlug(slug)
+  const slugString = slug.join('/')
+  const article = getArticleBySlug(slugString)
   if (!article) return { title: 'Not Found' }
   return { title: `${article.title} | Deep Blog` }
 }
@@ -77,7 +78,8 @@ const components: Components = {
 
 export default async function ArticlePage({ params }: Props) {
   const { slug } = await params
-  const article = getArticleBySlug(slug)
+  const slugString = slug.join('/')
+  const article = getArticleBySlug(slugString)
   const articles = getAllArticles()
 
   if (!article) {
